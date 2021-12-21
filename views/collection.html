@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+        integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/css/all.min.css">
+    <link href='https://fonts.googleapis.com/css?family=Palanquin:100' rel='stylesheet' type='text/css'>
+
+    <script>
+        async function connectToWallet() {
+            if (window.ethereum) {
+                try {
+                    // Request account access
+                    console.log(window.ethereum.selectedAddress == null)
+                    if (window.ethereum.selectedAddress == null) {
+                        await window.ethereum.enable();
+                        window.location.reload();
+                    }
+                } catch (error) {
+                    // User denied account access...
+                    console.error("User denied account access");
+                }
+            }
+        }
+    </script>
+</head>
+
+<body>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12">
+                <h3>Step1: connect to wallet</h3>
+            </div>
+            <div class="col-lg-12"><button class="btn btn-success" onclick="connectToWallet()">Connect to
+                    wallet</button>
+                
+                    <p> current wallet address: <span id="wallteAddr">Reading...</span></p>
+                
+                </div>
+
+            <div class="col-lg-12">
+                <h3>Step1: Check USDT balance</h3>
+            </div>
+            <div class="col-lg-12"><button class="btn btn-success" onclick="getUSDTBalance()">Get USDT balance</button>
+                <p> current USDT balance: <span id="USDTB">Reading...</span></p>
+            </div>
+        </div>
+
+        <div class="col-lg-12 pb-5"></div>
+        <div class="col-lg-12">
+            <div>
+                <div><p>Minted: </p><p id="minted"></p></div>
+                <label for=tokenID" class="form-label">Query By token Id</label>
+                <input id="tokenID" type="number" class="form-control" value="1">
+
+                <button class="btn btn-success" onclick="Query()">Query</button>
+
+                <p>Data:</p>
+                <p id="blox-owner"></p>
+                <p id="blox"></p>
+                <img  class="img-thumbnail" id="blox-img" />
+            </div>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.3.1.js"
+        integrity="sha256-2Kok7MbOyxpgUVvAk/HJ2jigOSYS2auK4Pfzbm7uH60=" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"
+        integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/gh/ethereum/web3.js/dist/web3.min.js"></script>
+    <script type="text/javascript" src="./Metablox.js"></script>
+    <script type="text/javascript" src="./usdt.js"></script>
+
+    <script>
+        var userAccount;
+        var metablox;
+
+        function startApp() {
+            var metabloxAddress = "0x82584aC2af4343ef88b522b483AbC861CdF7D9a3";
+            metablox = new web3js.eth.Contract(metabloxABI, metabloxAddress);
+
+            GetMintedPercentage();
+
+            var accountInterval = setInterval(async function () {
+                // Check if account has changed
+                let accounts = await ethereum.request({ method: 'eth_accounts' });
+                if (accounts[0] !== userAccount) {
+
+                    userAccount = accounts[0];
+
+                    $("#wallteAddr").text(userAccount);
+                    $("#playerAddress").val(userAccount)
+                }
+            }, 5000);
+        }
+
+        function Query(){
+            var x = $("#tokenID").val();
+            getOwenrById(x).then(function(blox) {
+                $("#blox-owner").text(JSON.stringify(blox));
+            });
+            
+            getCollectionDetailsById(x).then(function(blox) {
+                $("#blox").text(JSON.stringify(blox));
+            });
+
+            getCollectionTokenURIById(x).then(function(src) {
+                $("#blox-img").attr('src', src);
+            });
+        }
+
+        function GetMintedPercentage(){
+            let o, p;
+
+            getOwned().then(function(blox) {
+                o = blox;
+                console.log(o)
+            });
+
+            getTotalSupply().then(function(blox) {
+                p = blox;
+                $("#minted").text((o/p * 100) + "%");
+            });
+
+            
+        }
+
+        async function getUSDTBalance(){
+            var tokenAddress = "0x7de63c1B50d2bD74a95De53D971a58aA48a87518";
+
+            var USDT = new web3js.eth.Contract(usdtABI, tokenAddress);
+            var balance = await USDT.methods.balanceOf(userAccount).call()
+
+
+            $("#USDTB").text(balance);
+        }
+
+        function getCollectionDetailsById(id) {
+            return metablox.methods.bloxs(id).call()
+        }
+
+        function getCollectionTokenURIById(id) {
+            return metablox.methods.tokenURI(id).call()
+        }
+
+        function getOwenrById(id) {
+            return metablox.methods.ownerOf(id).call()
+        }
+
+        function getOwned() {
+            return metablox.methods._owned_supply().call()
+        }
+
+        function getTotalSupply() {
+            return metablox.methods.our_total_supply().call()
+        }
+
+        window.addEventListener('load', function () {
+
+            // Checking if Web3 has been injected by the browser (Mist/MetaMask)
+            if (typeof web3 !== 'undefined') {
+                // Use Mist/MetaMask's provider
+                web3js = new Web3(web3.currentProvider);
+            } else {
+                // Handle the case where the user doesn't have Metamask installed
+                // Probably show them a message prompting them to install Metamask
+            }
+
+            // Now you can start your app & access web3 freely:
+            startApp()
+        })
+    </script>
+</body>
+
+</html>

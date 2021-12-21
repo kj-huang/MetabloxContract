@@ -1,0 +1,24 @@
+
+   
+name: Smart Contract Mock CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Deploy the static website to
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ secrets.LINODE_STAGE_HOST }}
+        username: ${{ secrets.LINODE_USERNAME }}
+        key: ${{ secrets.LINODE_PEM }}
+        script: |
+          cd /usr/public/metablox-contracts
+          git checkout develop
+          git pull

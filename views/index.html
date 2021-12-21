@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+        integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/css/all.min.css">
+    <link href='https://fonts.googleapis.com/css?family=Palanquin:100' rel='stylesheet' type='text/css'>
+
+    <script>
+        async function connectToWallet() {
+            if (window.ethereum) {
+                try {
+                    // Request account access
+                    console.log(window.ethereum.selectedAddress == null)
+                    if (window.ethereum.selectedAddress == null) {
+                        await window.ethereum.enable();
+                        window.location.reload();
+                    }
+                } catch (error) {
+                    // User denied account access...
+                    console.error("User denied account access");
+                }
+            }
+        }
+    </script>
+</head>
+
+<body>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12">
+                <h3>Step1: connect to wallet</h3>
+            </div>
+            <div class="col-lg-12"><button class="btn btn-success" onclick="connectToWallet()">Connect to
+                    wallet</button>
+                
+                    <p> current wallet address: <span id="wallteAddr">Reading...</span></p>
+                
+                </div>
+
+            <div class="col-lg-12">
+                <h3>Step1: Check USDT balance</h3>
+            </div>
+            <div class="col-lg-12"><button class="btn btn-success" onclick="getUSDTBalance()">Get USDT balance</button>
+                <p> current USDT balance: <span id="USDTB">Reading...</span></p>
+            </div>
+
+            <div class="col-lg-12">
+                <p> current Contract address: <span id="CA">Reading...</span></p>
+            </div>
+        </div>
+
+        <div class="col-lg-12 pb-5"></div>
+
+        <div class="row">
+            <div class="col-lg-12">
+                <h3>Step2: Admin send the reserved NFT</h3>
+            </div>
+            <div class="col-lg-12">
+                <label for="playerAddress" class="form-label">Player Wallet address</label>
+                <input id="playerAddress" type="text" class="form-control">
+
+                <label for="tokenURI" class="form-label">token URI</label>
+                <input id="tokenURI" type="text" class="form-control" value="https://www.pnglib.com/wp-content/uploads/2021/02/cute-cat_6020853d4f63a.png">
+
+                <label for="bloxNumber" class="form-label">Blox Number</label>
+                <input id="bloxNumber" type="text" class="form-control" value="0">
+
+                <label for="bloxName" class="form-label">Blox name</label>
+                <input id="bloxName" type="text" class="form-control" value="Blox 0">
+
+                <label for="bloxTier" class="form-label">Blox tier</label>
+                <input id="bloxTier" type="number" class="form-control" value="1">
+
+                <label for="bloxLevel" class="form-label">Blox level</label>
+                <input id="bloxLevel" type="number" class="form-control" value="1">
+
+                <label for="bloxGen" class="form-label">Blox generation</label>
+                <input id="bloxGen" type="number" class="form-control" value="1">
+
+                <button class="btn btn-success" onclick="getReservedNFT()">Mint the reserved NFT to user</button>
+
+                <div id="txStatus">Status: </div>
+            </div>
+        </div>
+
+        <div class="col-lg-12 pb-5"></div>
+
+        <div class="row">
+            <div>TODO</div>
+            <div class="col-lg-12">
+                <h3>Step3: Buy the minted NFT</h3>
+            </div>
+            <div class="col-lg-12"><button class="btn btn-success" onclick="buyNFT()">Buy NFT</button></div>
+        </div>
+    </div>
+
+
+
+
+
+
+
+    <script src="https://code.jquery.com/jquery-3.3.1.js"
+        integrity="sha256-2Kok7MbOyxpgUVvAk/HJ2jigOSYS2auK4Pfzbm7uH60=" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"
+        integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/gh/ethereum/web3.js/dist/web3.min.js"></script>
+    <script type="text/javascript" src="./Metablox.js"></script>
+    <script type="text/javascript" src="./usdt.js"></script>
+
+    <script>
+        var userAccount;
+        var metablox;
+
+        function startApp() {
+            var metabloxAddress = "0x82584aC2af4343ef88b522b483AbC861CdF7D9a3";
+            metablox = new web3js.eth.Contract(metabloxABI, metabloxAddress);
+
+            $("#CA").text(metabloxAddress);
+
+            var accountInterval = setInterval(async function () {
+                // Check if account has changed
+
+
+                let accounts = await ethereum.request({ method: 'eth_accounts' });
+                if (accounts[0] !== userAccount) {
+
+                    userAccount = accounts[0];
+
+                    $("#wallteAddr").text(userAccount);
+                    $("#playerAddress").val(userAccount)
+                }
+            }, 5000);
+        }
+
+        async function getUSDTBalance(){
+            var tokenAddress = "0x7de63c1B50d2bD74a95De53D971a58aA48a87518";
+
+            var USDT = new web3js.eth.Contract(usdtABI, tokenAddress);
+            var balance = await USDT.methods.balanceOf(userAccount).call()
+
+
+            $("#USDTB").text(balance);
+        }
+
+        function getReservedNFT() {
+            let playerAddress = $("#playerAddress").val();
+            let tokenURI = $("#tokenURI").val();
+            let bloxNumber = $("#bloxNumber").val();
+            let bloxName = $("#bloxName").val();
+            let bloxTier = $("#bloxTier").val();
+            let bloxLevel = $("#bloxLevel").val();
+            let bloxGen = $("#bloxGen").val();
+
+            return metablox.methods.mintUniqueTokenTo(playerAddress, tokenURI, bloxNumber, bloxName, bloxTier, bloxLevel, bloxGen)
+                        .send({ from: userAccount })
+                        .on("receipt", function(receipt) {
+                            $("#txStatus").text("Successfully created " + name + "!");
+                            // Transaction was accepted into the blockchain, let's redraw the UI
+                        })
+                        .on("error", function(error) {
+                            // Do something to alert the user their transaction has failed
+                            $("#txStatus").text(error);
+                        });
+        }
+
+        window.addEventListener('load', function () {
+
+            // Checking if Web3 has been injected by the browser (Mist/MetaMask)
+            if (typeof web3 !== 'undefined') {
+                // Use Mist/MetaMask's provider
+                web3js = new Web3(web3.currentProvider);
+            } else {
+                // Handle the case where the user doesn't have Metamask installed
+                // Probably show them a message prompting them to install Metamask
+            }
+
+            // Now you can start your app & access web3 freely:
+            startApp()
+        })
+    </script>
+</body>
+
+</html>
