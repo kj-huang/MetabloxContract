@@ -212,25 +212,6 @@ var metabloxABI = [
 				"type": "uint256"
 			}
 		],
-		"name": "bloxToOwner",
-		"outputs": [
-			{
-				"internalType": "address",
-				"name": "",
-				"type": "address"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "uint256",
-				"name": "",
-				"type": "uint256"
-			}
-		],
 		"name": "bloxs",
 		"outputs": [
 			{
@@ -306,13 +287,19 @@ var metabloxABI = [
 		"type": "function"
 	},
 	{
-		"inputs": [],
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "id",
+				"type": "uint256"
+			}
+		],
 		"name": "lookupPrice",
 		"outputs": [
 			{
-				"internalType": "uint256[]",
+				"internalType": "uint256",
 				"name": "",
-				"type": "uint256[]"
+				"type": "uint256"
 			}
 		],
 		"stateMutability": "view",
@@ -369,11 +356,6 @@ var metabloxABI = [
 	},
 	{
 		"inputs": [
-			{
-				"internalType": "uint256",
-				"name": "_tokenId",
-				"type": "uint256"
-			},
 			{
 				"internalType": "string",
 				"name": "tokenURI",
@@ -457,25 +439,6 @@ var metabloxABI = [
 	{
 		"inputs": [
 			{
-				"internalType": "address",
-				"name": "",
-				"type": "address"
-			}
-		],
-		"name": "ownerBloxCount",
-		"outputs": [
-			{
-				"internalType": "uint256",
-				"name": "",
-				"type": "uint256"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
 				"internalType": "uint256",
 				"name": "tokenId",
 				"type": "uint256"
@@ -495,6 +458,25 @@ var metabloxABI = [
 	{
 		"inputs": [],
 		"name": "phase",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"name": "price_tiers",
 		"outputs": [
 			{
 				"internalType": "uint256",
@@ -577,6 +559,24 @@ var metabloxABI = [
 			}
 		],
 		"name": "setApprovalForAll",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "_tokenId",
+				"type": "uint256"
+			},
+			{
+				"internalType": "string",
+				"name": "tokenURI",
+				"type": "string"
+			}
+		],
+		"name": "setRootingMemeory",
 		"outputs": [],
 		"stateMutability": "nonpayable",
 		"type": "function"

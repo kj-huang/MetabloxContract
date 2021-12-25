@@ -21,14 +21,20 @@ interface IERC20 {
 
 
 contract MetabloxMarketPlace is Ownable{
+
+    /**
+     * @dev Emitted a event when a trade change by the owner
+    */
     event TradeStatusChange(uint256 tradeCounter, bytes32 status);
 
-    // whitelist events
+    
     event WhitelistRequested(address indexed subscriber);
     event WhitelistApproved(address indexed subscriber);
     event WhitelistRejected(address indexed subscriber);
 
-    //commissionFee events
+    /**
+     * @dev Emitted a event when the rate of commission is changed by the contract owner
+    */
     event CommissionFeeChanged(uint256 indexed newCommissionFee);
 
     enum WhitelistState{
