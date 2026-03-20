@@ -1,23 +1,27 @@
 {
   "name": "metablox-contracts",
-  "version": "1.0.0",
-  "description": "",
+  "version": "2.0.0",
+  "description": "Metablox smart contracts — NFT land parcels on Polygon with UUPS proxy upgradeability",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "compile": "truffle compile",
+    "test": "truffle test",
+    "migrate": "truffle migrate"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Metablox-co/contracts.git"
+    "url": "git+https://github.com/kj-huang/MetabloxContract.git"
   },
-  "author": "",
-  "license": "ISC",
+  "author": "KJH (Kuan-Jung, Huang)",
+  "license": "MIT",
   "bugs": {
-    "url": "https://github.com/Metablox-co/contracts/issues"
+    "url": "https://github.com/kj-huang/MetabloxContract/issues"
   },
-  "homepage": "https://github.com/Metablox-co/contracts#readme",
+  "homepage": "https://github.com/kj-huang/MetabloxContract#readme",
   "dependencies": {
-    "@openzeppelin/contracts": "^4.3.2"
+    "@openzeppelin/contracts": "^4.3.2",
+    "@openzeppelin/contracts-upgradeable": "^4.8.0",
+    "@chainlink/contracts": "^0.5.1"
   },
   "devDependencies": {
     "@openzeppelin/truffle-upgrades": "^1.10.0"
